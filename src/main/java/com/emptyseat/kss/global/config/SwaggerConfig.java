@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "KSS API Documentation",
+                title = "\uD83D\uDCDA KSS API Documentation",
                 description = "KSS API 명세서입니다.",
                 version = "v1"
         ))
