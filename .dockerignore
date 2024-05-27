@@ -1,0 +1,12 @@
+.gradle
+/build
+/out
+**/*.iml
+**/*.ipr
+**/*.iws
+.idea
+*.log
+*.tmp
+*.swp
+.DS_Store
+node_modules
