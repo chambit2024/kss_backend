@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: kss
+  data:
+    redis:
+      host: localhost
+      port: 51443
