@@ -1,4 +1,4 @@
-package com.emptyseat.kss.global.redis;
+package com.emptyseat.kss.global.redis.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RedisService {
+public class RedisCRUDService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     /**
@@ -43,7 +43,7 @@ public class RedisService {
         if (values.get(key) == null) {
             return "false";
         }
-        return (String)values.get(key);
+        return String.valueOf(values.get(key));
     }
 
     /**
@@ -65,7 +65,7 @@ public class RedisService {
     @Transactional(readOnly = true)
     public String getHashOps(String key, String hashKey) {
         HashOperations<String, Object, Object> values = redisTemplate.opsForHash();
-        return Boolean.TRUE.equals(values.hasKey(key, hashKey)) ? (String)redisTemplate.opsForHash().get(key, hashKey) : "";
+        return Boolean.TRUE.equals(values.hasKey(key, hashKey)) ? String.valueOf(redisTemplate.opsForHash().get(key, hashKey)) : "";
     }
 
     public void deleteHashOps(String key, String hashKey) {
