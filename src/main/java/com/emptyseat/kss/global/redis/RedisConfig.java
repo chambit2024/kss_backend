@@ -1,7 +1,8 @@
 package com.emptyseat.kss.global.redis;
 
-import com.emptyseat.kss.global.redis.dto.ChatMessage;
-import com.emptyseat.kss.global.redis.service.RedisSubService;
+import com.emptyseat.kss.domain.yolo.dto.YoloMessageRequest;
+import com.emptyseat.kss.domain.yolo.service.YoloSubscribeService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -44,7 +45,7 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(YoloMessageRequest.class));
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         return redisTemplate;
@@ -55,7 +56,7 @@ public class RedisConfig {
      */
     @Bean
     MessageListenerAdapter messageListenerAdapter() {
-        return new MessageListenerAdapter(new RedisSubService());
+        return new MessageListenerAdapter(new YoloSubscribeService());
     }
 
     /**
@@ -74,6 +75,6 @@ public class RedisConfig {
      */
     @Bean
     ChannelTopic topic() {
-        return new ChannelTopic("topic1");
+        return new ChannelTopic("yolo_result");
     }
 }
