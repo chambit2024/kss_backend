@@ -1,4 +1,4 @@
-package com.emptyseat.kss.domain.frame.controller;
+package com.emptyseat.kss.domain.yolo.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/frame")
-public class FrameController {
+public class YoloController {
     @Operation(
             summary = "프레임 조회",
             description = "특정 프레임을 조회합니다."
