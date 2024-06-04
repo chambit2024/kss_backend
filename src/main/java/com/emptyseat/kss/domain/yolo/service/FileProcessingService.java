@@ -19,12 +19,19 @@ public class FileProcessingService {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // TODO: 각 줄마다 공백 split을 통해 Box 객체 리스트에 추가하기
-                log.info("Read line: " + line);
-
+                String[] parts = line.split("\\s+");
+                if (parts.length != 5) {
+                    throw new IllegalArgumentException("파싱 데이터 포멧이 맞지 않습니다.");
+                }
+                Box box = new Box(parts[0], parts[1], parts[2], parts[3], parts[4]);
+                boxList.add(box);
             }
         } catch (IOException e) {
             log.error("Error reading file: " + filePath, e);
+        }
+
+        for (Box b: boxList) {
+            log.info("boxList: " + b.toString());
         }
 
     }

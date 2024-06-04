@@ -23,4 +23,14 @@ public class Box {
         this.height = Double.parseDouble(h);
     }
 
+    @Override
+    public String toString() {
+        return "Box{" +
+                "labelType=" + labelType +
+                ", topleft_x=" + topleft_x +
+                ", topleft_y=" + topleft_y +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }
