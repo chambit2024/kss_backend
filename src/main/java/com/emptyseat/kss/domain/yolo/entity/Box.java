@@ -9,26 +9,34 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Box {
     private LabelType labelType;
-    private double topleft_x;
-    private double topleft_y;
+    private double center_x;
+    private double center_y;
     private double width;
     private double height;
 
     public Box(String labelType, String x, String y, String w, String h) {
         int labelTypeValue = Integer.parseInt(labelType);
         this.labelType = LabelType.fromValue(labelTypeValue);
-        this.topleft_x = Double.parseDouble(x);
-        this.topleft_y = Double.parseDouble(y);
+        this.center_x = Double.parseDouble(x);
+        this.center_y = Double.parseDouble(y);
         this.width = Double.parseDouble(w);
         this.height = Double.parseDouble(h);
+    }
+
+    public double boxSize() {
+        return this.width * this.height;
+    }
+
+    public boolean isBigger(Box box) {
+        return this.boxSize() > box.boxSize();
     }
 
     @Override
     public String toString() {
         return "Box{" +
                 "labelType=" + labelType +
-                ", topleft_x=" + topleft_x +
-                ", topleft_y=" + topleft_y +
+                ", center_x=" + center_x +
+                ", center_y=" + center_y +
                 ", width=" + width +
                 ", height=" + height +
                 '}';
