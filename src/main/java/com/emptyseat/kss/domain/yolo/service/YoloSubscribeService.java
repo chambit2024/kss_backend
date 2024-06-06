@@ -32,6 +32,10 @@ public class YoloSubscribeService implements MessageListener {
 
             fileProcessingService.processFile(chatMessage.getFilePath());
 
+            log.info("현재 파일 boxlist: " + fileProcessingService.getBoxList());
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }

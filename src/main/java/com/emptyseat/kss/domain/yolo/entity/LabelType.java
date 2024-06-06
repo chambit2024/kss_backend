@@ -9,14 +9,14 @@ import lombok.Getter;
 
 @Getter
 public enum LabelType {
-    BAG(1),
-    BOOK(2),
-    BOTTLE(3),
-    CHAIR(4),
-    LAPTOP(5),
-    PAD(6),
-    PEOPLE(7),
-    PHONE(8);
+    BAG(0),
+    BOOK(1),
+    BOTTLE(2),
+    CHAIR(3),
+    LAPTOP(4),
+    PAD(5),
+    PEOPLE(6),
+    PHONE(7);
 
     private final int value;
 

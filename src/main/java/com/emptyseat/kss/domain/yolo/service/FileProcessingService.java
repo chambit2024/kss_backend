@@ -1,6 +1,7 @@
 package com.emptyseat.kss.domain.yolo.service;
 
 import com.emptyseat.kss.domain.yolo.entity.Box;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,8 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Getter
 public class FileProcessingService {
-
     private final List<Box> boxList = new ArrayList<>();
     public void processFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
