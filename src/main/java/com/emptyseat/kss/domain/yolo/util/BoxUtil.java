@@ -1,10 +1,12 @@
 package com.emptyseat.kss.domain.yolo.util;
 
 import com.emptyseat.kss.domain.yolo.entity.Box;
-import com.emptyseat.kss.domain.yolo.service.CheckSeatService;
+import lombok.NoArgsConstructor;
+
 import java.util.Comparator;
 import java.util.List;
 
+@NoArgsConstructor
 public class BoxUtil {
 
     /**
@@ -54,6 +56,18 @@ public class BoxUtil {
                 };
             }
         });
+    }
+
+    /**
+     *
+     * @param box1 비교 대상 1
+     * @param box2 비교 대상 2
+     * @param threshold 두 좌석 사이 거리의 임계값. 임계값 이내면 오차가 나더라도 같은 자리로 인식한다.
+     * @return 오차 범위 이내면 true, 밖이면 false
+     */
+    public boolean isSameSeat(Box box1, Box box2, double threshold) {
+        return Math.abs(box1.getCenter_x() - box2.getCenter_x()) < threshold
+                && Math.abs(box1.getCenter_y() - box2.getCenter_y()) < threshold;
     }
 
 }
