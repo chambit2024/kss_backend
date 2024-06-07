@@ -31,9 +31,6 @@ public class FileProcessingService {
             log.error("Error reading file: " + filePath, e);
         }
 
-        for (Box b: boxList) {
-            log.info("boxList: " + b.toString());
-        }
-
+        log.info("boxList: " + getBoxList());
     }
 }
