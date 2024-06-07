@@ -20,7 +20,7 @@ public class YoloSubscribeService implements MessageListener {
 //    public static List<YoloMessageRequest> filePathList = new ArrayList<>();
     private final ObjectMapper mapper = new ObjectMapper();
     private final FileProcessingService fileProcessingService = new FileProcessingService();
-
+    private CheckSeatService checkSeatService;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -34,7 +34,7 @@ public class YoloSubscribeService implements MessageListener {
 
             log.info("현재 파일 boxlist: " + fileProcessingService.getBoxList());
 
-
+            checkSeatService = new CheckSeatService(fileProcessingService.getBoxList());
 
         } catch (IOException e) {
             e.printStackTrace();
