@@ -38,7 +38,7 @@ public class CheckSeatService {
 
     public void FindHoggedSeat() {
         boolean isSeatExist = false;
-        log.info("[BEFORE] seatCount : " + seatCount.toString());
+        log.info("[BEFORE] seatCount : " + seatCount);
         for (Box chair: chairs) {
             Pos currentChairPos = new Pos(chair.getCenter_x(), chair.getCenter_y());
             for (Pos seatPos: seatCount.keySet()) {
@@ -74,6 +74,6 @@ public class CheckSeatService {
                 }
             }
         }
-        log.info("[AFTER] seatCount : " + seatCount.toString());
+        log.info("[AFTER] seatCount : " + seatCount);
     }
 }

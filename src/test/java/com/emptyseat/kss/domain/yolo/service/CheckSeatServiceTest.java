@@ -1,7 +1,6 @@
 package com.emptyseat.kss.domain.yolo.service;
 
 import com.emptyseat.kss.domain.yolo.entity.Box;
-import com.emptyseat.kss.domain.yolo.entity.LabelType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

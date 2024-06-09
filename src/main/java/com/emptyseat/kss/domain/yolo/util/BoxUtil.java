@@ -4,9 +4,6 @@ import com.emptyseat.kss.domain.yolo.entity.Box;
 import com.emptyseat.kss.domain.yolo.entity.Pos;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
-import java.util.List;
-
 @NoArgsConstructor
 public class BoxUtil {
 
@@ -42,35 +39,12 @@ public class BoxUtil {
         return overlapArea / baseArea;
     }
 
-    public void sortBoxesByLabelType(List<Box> boxes) {
-        boxes.sort(new Comparator<Box>() {
-            @Override
-            public int compare(Box box1, Box box2) {
-                return getOrder(box1.getLabelType().getValue()) - getOrder(box2.getLabelType().getValue());
-            }
-
-            private int getOrder(int labelType) {
-                return switch (labelType) {
-                    case 3 -> 1; // CHAIR 먼저
-                    case 6 -> 2; // 그 다음 PEOPLE
-                    default -> 3; // 나머지는 뒤로
-                };
-            }
-        });
-    }
-
     /**
-     *
-     * @param box1 비교 대상 1
-     * @param box2 비교 대상 2
+     * @param pos1 비교 대상 1
+     * @param pos2 비교 대상 2
      * @param threshold 두 좌석 사이 거리의 임계값. 임계값 이내면 오차가 나더라도 같은 자리로 인식한다.
      * @return 오차 범위 이내면 true, 밖이면 false
      */
-    public boolean isSameSeat(Box box1, Box box2, double threshold) {
-        return Math.abs(box1.getCenter_x() - box2.getCenter_x()) < threshold
-                && Math.abs(box1.getCenter_y() - box2.getCenter_y()) < threshold;
-    }
-
     public boolean isSameSeat(Pos pos1, Pos pos2, double threshold) {
         return Math.abs(pos1.getX() - pos2.getX()) < threshold
                 && Math.abs(pos1.getY() - pos2.getY()) < threshold;
