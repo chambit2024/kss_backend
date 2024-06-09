@@ -35,9 +35,7 @@ public class CheckSeatService {
 
     public void FindHoggedSeat() {
         boolean isSeatExist = false;
-        Set<Box> checkedChairs = new HashSet<>();
         log.info("[BEFORE] seatCount : " + seatCount);
-
 
         for (Box chair: chairs) {
             Pos currentChairPos = new Pos(chair.getCenter_x(), chair.getCenter_y());
@@ -45,17 +43,17 @@ public class CheckSeatService {
                 if (boxUtil.isSameSeat(currentChairPos, seatPos, seatDistanceThreshold)) {
                     // 기존 좌석 취급. 좌표 업데이트 필요
                     isSeatExist = true;
-                    int currentSeatCount = seatCount.get(seatPos);
+                    int currentSeatCountValue = seatCount.get(seatPos);
                     seatCount.remove(seatPos);
-                    seatCount.put(currentChairPos, currentSeatCount);
-                    log.info("seatCount 업데이트 : " + seatCount.get(currentChairPos));
+                    seatCount.put(currentChairPos, currentSeatCountValue);
+                    log.info("key change: " + seatPos + " -> " + currentChairPos + ", value=" + currentSeatCountValue);
                     break;
                 }
             }
             if (!isSeatExist) {
                 seatCount.put(currentChairPos, 0);
             }
-            GOTO_PEOPLE:
+            LOOP_PEOPLE:
             for (Box people: peoples) {
 
                 if (boxUtil.overlap_percent(chair, people) > boxCollidingPercentThreshold) {
@@ -64,11 +62,11 @@ public class CheckSeatService {
                 } else {
                     // 사석화 O
                     for (Box other: others) {
-                        if ((boxUtil.overlap_percent(chair, other) > boxCollidingPercentThreshold) && !checkedChairs.contains(chair)) {
+                        if (boxUtil.overlap_percent(chair, other) > boxCollidingPercentThreshold) {
                             // 사석화 O. seat_count += 1
                             seatCount.put(currentChairPos, seatCount.get(currentChairPos) + 1);
-                            checkedChairs.add(chair);
-                            break GOTO_PEOPLE;
+                            log.info("seatCount <key:" + currentChairPos +"> 업데이트 : " + seatCount.get(currentChairPos));
+                            break LOOP_PEOPLE;
                         } else {
                             // 사석화 X. seat_count 0으로 초기화
                             seatCount.put(currentChairPos, 0);
