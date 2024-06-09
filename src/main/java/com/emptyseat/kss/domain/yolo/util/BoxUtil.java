@@ -1,6 +1,7 @@
 package com.emptyseat.kss.domain.yolo.util;
 
 import com.emptyseat.kss.domain.yolo.entity.Box;
+import com.emptyseat.kss.domain.yolo.entity.Pos;
 import lombok.NoArgsConstructor;
 
 import java.util.Comparator;
@@ -68,6 +69,11 @@ public class BoxUtil {
     public boolean isSameSeat(Box box1, Box box2, double threshold) {
         return Math.abs(box1.getCenter_x() - box2.getCenter_x()) < threshold
                 && Math.abs(box1.getCenter_y() - box2.getCenter_y()) < threshold;
+    }
+
+    public boolean isSameSeat(Pos pos1, Pos pos2, double threshold) {
+        return Math.abs(pos1.getX() - pos2.getX()) < threshold
+                && Math.abs(pos1.getY() - pos2.getY()) < threshold;
     }
 
 }
