@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -22,7 +19,7 @@ public class CheckSeatService {
     private final BoxUtil boxUtil = new BoxUtil();
     private final Map<Pos, Integer> seatCount = new HashMap<>();
     private final double seatDistanceThreshold = 0.01; // 기존 자리인지의 여부를 판단하는 절댓값 기준치
-    private final double boxCollidingPercentThreshold = 30; // box들 간의 겹침 여부를 판단하는 기준값 (%)
+    private final double boxCollidingPercentThreshold = 10; // box들 간의 겹침 여부를 판단하는 기준값 (%)
 
 
     public CheckSeatService(List<Box> boxList) {
@@ -38,7 +35,10 @@ public class CheckSeatService {
 
     public void FindHoggedSeat() {
         boolean isSeatExist = false;
+        Set<Box> checkedChairs = new HashSet<>();
         log.info("[BEFORE] seatCount : " + seatCount);
+
+
         for (Box chair: chairs) {
             Pos currentChairPos = new Pos(chair.getCenter_x(), chair.getCenter_y());
             for (Pos seatPos: seatCount.keySet()) {
@@ -55,17 +55,20 @@ public class CheckSeatService {
             if (!isSeatExist) {
                 seatCount.put(currentChairPos, 0);
             }
+            GOTO_PEOPLE:
             for (Box people: peoples) {
+
                 if (boxUtil.overlap_percent(chair, people) > boxCollidingPercentThreshold) {
                     // 사석화 X. seat_count 0으로 초기화
                     seatCount.put(currentChairPos, 0);
                 } else {
                     // 사석화 O
                     for (Box other: others) {
-                        if (boxUtil.overlap_percent(chair, other) > boxCollidingPercentThreshold) {
+                        if ((boxUtil.overlap_percent(chair, other) > boxCollidingPercentThreshold) && !checkedChairs.contains(chair)) {
                             // 사석화 O. seat_count += 1
                             seatCount.put(currentChairPos, seatCount.get(currentChairPos) + 1);
-                            break;
+                            checkedChairs.add(chair);
+                            break GOTO_PEOPLE;
                         } else {
                             // 사석화 X. seat_count 0으로 초기화
                             seatCount.put(currentChairPos, 0);
