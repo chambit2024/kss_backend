@@ -8,4 +8,12 @@ import lombok.Getter;
 public class Pos {
     private Double x;
     private Double y;
+
+    @Override
+    public String toString() {
+        return "Pos{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
