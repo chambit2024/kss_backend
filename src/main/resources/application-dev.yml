@@ -8,3 +8,6 @@ spring:
     redis:
       host: localhost
       port: 51443
+      database:
+        pubsub: 0
+        crud: 1
