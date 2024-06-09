@@ -52,16 +52,23 @@ public class RedisConfig {
         return createConnectionFactoryWith(crudIndex);
     }
 
+    /**
+     * Serializer 설정으로 redis-cli를 통해 직접 데이터 조회하는 RedisTemplate 설정
+     */
     @Bean
-    public RedisTemplate<String, Object> pubsubRedisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> pubsubRedisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(YoloMessageRequest.class));
+        //TODO: 수상해 여기 (pubsubConnectionFactory()로 바로 지정하는게 맞나..?
         redisTemplate.setConnectionFactory(pubsubConnectionFactory());
 
         return redisTemplate;
     }
 
+    /**
+     * Serializer 설정으로 redis-cli를 통해 직접 데이터 조회하는 RedisTemplate 설정
+     */
     @Bean
     public StringRedisTemplate crudRedisTemplate(@Qualifier("CRUD") RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
@@ -81,9 +88,7 @@ public class RedisConfig {
 
 
 
-    /**
-     * Serializer 설정으로 redis-cli를 통해 직접 데이터 조회하는 RedisTemplate 설정
-     */
+
 //    @Bean
 //    public RedisTemplate<String, Object> redisTemplate() {
 //        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
