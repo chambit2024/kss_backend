@@ -36,7 +36,7 @@ public class BoxUtil {
         }
         else overlapArea = 0;
 
-        return overlapArea / baseArea;
+        return (overlapArea / baseArea) * 100;
     }
 
     /**
