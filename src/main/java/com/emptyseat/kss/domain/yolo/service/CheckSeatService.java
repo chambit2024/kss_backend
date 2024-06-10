@@ -17,7 +17,7 @@ public class CheckSeatService {
     private final List<Box> peoples = new ArrayList<>();
     private final List<Box> others = new ArrayList<>();
     private final BoxUtil boxUtil = new BoxUtil();
-    private final Map<Pos, Integer> seatCount = new HashMap<>();
+//    private final Map<Pos, Integer> seatCount = new HashMap<>();
     private final double seatDistanceThreshold = 0.01; // 기존 자리인지의 여부를 판단하는 절댓값 기준치
     private final double boxCollidingPercentThreshold = 10; // box들 간의 겹침 여부를 판단하는 기준값 (%)
 
@@ -33,7 +33,7 @@ public class CheckSeatService {
         }
     }
 
-    public void FindHoggedSeat() {
+    public void FindHoggedSeat(Map<Pos, Integer> seatCount) {
         boolean isSeatExist = false;
         log.info("[BEFORE] seatCount : " + seatCount);
 
@@ -58,7 +58,11 @@ public class CheckSeatService {
 
                 if (boxUtil.overlap_percent(chair, people) > boxCollidingPercentThreshold) {
                     // 사석화 X. seat_count 0으로 초기화
+                    int prevChairPos = seatCount.get(currentChairPos);
                     seatCount.put(currentChairPos, 0);
+                    if (prevChairPos > 0) {
+                        log.info("seatCount <key:" + currentChairPos +"> 초기화 by [chair, people]: " + seatCount.get(currentChairPos));
+                    }
                 } else {
                     // 사석화 O
                     for (Box other: others) {
@@ -69,11 +73,16 @@ public class CheckSeatService {
                             break LOOP_PEOPLE;
                         } else {
                             // 사석화 X. seat_count 0으로 초기화
+                            int prevChairPos = seatCount.get(currentChairPos);
                             seatCount.put(currentChairPos, 0);
+                            if (prevChairPos > 0) {
+                                log.info("seatCount <key:" + currentChairPos +"> 초기화 by [only chair]: " + seatCount.get(currentChairPos));
+                            }
                         }
                     }
                 }
             }
+            // log.info("break gotopeople test");
         }
         log.info("[AFTER] seatCount : " + seatCount);
     }
