@@ -30,7 +30,5 @@ public class FileProcessingService {
         } catch (IOException e) {
             log.error("Error reading file: " + filePath, e);
         }
-
-        log.info("boxList: " + getBoxList());
     }
 }
