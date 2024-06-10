@@ -45,17 +45,4 @@ class CheckSeatServiceTest {
         assertEquals(checkSeatService.getPeoples().size(), 2, "peoples 개수 불일치");
         assertEquals(checkSeatService.getOthers().size(), 3, "others 개수 불일치");
     }
-
-    @Test
-    @DisplayName("모든 경우에 맞게 seatCount가 업데이트되는지 확인")
-    void CheckSeatService_seatCount작동확인() {
-        // given
-        CheckSeatService checkSeatService = new CheckSeatService(boxList);
-
-        // when
-        checkSeatService.FindHoggedSeat();
-
-        // then
-
-    }
 }
