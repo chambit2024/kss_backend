@@ -74,6 +74,11 @@ public class RedisConfig {
         return new StringRedisTemplate(connectionFactory);
     }
 
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
+    }
+
     /**
      * RedisProperties로 application.properties에 저장된 host, port, database index 연결
      */
