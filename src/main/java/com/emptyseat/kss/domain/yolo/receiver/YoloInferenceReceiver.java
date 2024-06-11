@@ -1,6 +1,7 @@
 package com.emptyseat.kss.domain.yolo.receiver;
 
 import com.emptyseat.kss.domain.yolo.dto.YoloMessageRequest;
+import com.emptyseat.kss.domain.yolo.entity.Box;
 import com.emptyseat.kss.domain.yolo.entity.Pos;
 import com.emptyseat.kss.domain.yolo.service.CheckSeatService;
 import com.emptyseat.kss.domain.yolo.service.FileProcessingService;
@@ -13,9 +14,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Slf4j
@@ -30,8 +29,11 @@ public class YoloInferenceReceiver implements MessageListener {
     private final FileProcessingService fileProcessingService = new FileProcessingService();
     private final Map<Pos, Integer> seatCount = new HashMap<>();
 
+    private final Set<Box> hoggedSeatSet = new HashSet<>();
+
 
     private String labelStoragePath = "/labels/";
+    private String DlabelStoragePath = "/Users/seungho/Projects/kss_backend/src/main/resources/mock/";
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -39,16 +41,19 @@ public class YoloInferenceReceiver implements MessageListener {
             // ObjectMapper.readValue를 사용해 JSON을 파싱하여 POJO로 변환
             YoloMessageRequest chatMessage = mapper.readValue(message.getBody(), YoloMessageRequest.class);
 
-            String filePath = labelStoragePath + chatMessage.getFilePath();
+            String filePath = DlabelStoragePath + chatMessage.getFilePath();
             log.info("현재 파일 path: " + filePath);
+
+            fileProcessingService.clearBoxList();
             fileProcessingService.processFile(filePath);
 
             log.info("현재 파일 boxlist: " + fileProcessingService.getBoxList());
 
             CheckSeatService checkSeatService = new CheckSeatService(fileProcessingService.getBoxList());
-            checkSeatService.FindHoggedSeat(seatCount);
+            checkSeatService.FindHoggedSeat(seatCount, hoggedSeatSet);
 
             log.info("누적 seatCount: " + seatCount);
+            log.info("현재 hoggedSeat: " + hoggedSeatSet);
 
         } catch (IOException e) {
             e.printStackTrace();

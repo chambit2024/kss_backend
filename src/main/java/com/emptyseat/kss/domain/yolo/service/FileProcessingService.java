@@ -13,9 +13,17 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Getter
 public class FileProcessingService {
     private final List<Box> boxList = new ArrayList<>();
+
+    public List<Box> getBoxList() {
+        return new ArrayList<>(boxList); // 방어적 복사
+    }
+
+    public void clearBoxList() {
+        boxList.clear();
+    }
+
     public void processFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -25,7 +33,9 @@ public class FileProcessingService {
                     throw new IllegalArgumentException("파싱 데이터 포멧이 맞지 않습니다.");
                 }
                 Box box = new Box(parts[0], parts[1], parts[2], parts[3], parts[4]);
-                boxList.add(box);
+                if (!boxList.contains(box)) {
+                    boxList.add(box);
+                }
             }
         } catch (IOException e) {
             log.error("Error reading file: " + filePath, e);

@@ -18,8 +18,9 @@ public class CheckSeatService {
     private final List<Box> others = new ArrayList<>();
     private final BoxUtil boxUtil = new BoxUtil();
 //    private final Map<Pos, Integer> seatCount = new HashMap<>();
-    private final double seatDistanceThreshold = 0.01; // 기존 자리인지의 여부를 판단하는 절댓값 기준치
+    private final double seatDistanceThreshold = 0.1; // 기존 자리인지의 여부를 판단하는 절댓값 기준치
     private final double boxCollidingPercentThreshold = 10; // box들 간의 겹침 여부를 판단하는 기준값 (%)
+    private final double seatCountThreshold = 10; // 사석화 판정 기준 임계치
 
 
     public CheckSeatService(List<Box> boxList) {
@@ -33,16 +34,17 @@ public class CheckSeatService {
         }
     }
 
-    public void FindHoggedSeat(Map<Pos, Integer> seatCount) {
+    public void FindHoggedSeat(Map<Pos, Integer> seatCount, Set<Box> hoggedSeatSet) {
         boolean isSeatExist = false;
         log.info("[BEFORE] seatCount : " + seatCount);
 
         for (Box chair: chairs) {
             Pos currentChairPos = new Pos(chair.getCenter_x(), chair.getCenter_y());
             for (Pos seatPos: seatCount.keySet()) {
-                if (boxUtil.isSameSeat(currentChairPos, seatPos, seatDistanceThreshold)) {
+                if ((Objects.equals(seatPos.getX(), currentChairPos.getX()) && Objects.equals(seatPos.getY(), currentChairPos.getY())) || boxUtil.isSameSeat(currentChairPos, seatPos, seatDistanceThreshold)) {
                     // 기존 좌석 취급. 좌표 업데이트 필요
                     isSeatExist = true;
+
                     int currentSeatCountValue = seatCount.get(seatPos);
                     seatCount.remove(seatPos);
                     seatCount.put(currentChairPos, currentSeatCountValue);
@@ -58,7 +60,7 @@ public class CheckSeatService {
 
                 if (boxUtil.overlap_percent(chair, people) > boxCollidingPercentThreshold) {
                     // 사석화 X. seat_count 0으로 초기화
-                    int prevChairPos = seatCount.get(currentChairPos);
+                    int prevChairPos = seatCount.getOrDefault(currentChairPos, 0);
                     seatCount.put(currentChairPos, 0);
                     if (prevChairPos > 0) {
                         log.info("seatCount <key:" + currentChairPos +"> 초기화 by [chair, people]: " + seatCount.get(currentChairPos));
@@ -68,12 +70,16 @@ public class CheckSeatService {
                     for (Box other: others) {
                         if (boxUtil.overlap_percent(chair, other) > boxCollidingPercentThreshold) {
                             // 사석화 O. seat_count += 1
-                            seatCount.put(currentChairPos, seatCount.get(currentChairPos) + 1);
+                            int nextSeatCount = seatCount.getOrDefault(currentChairPos, 0) + 1;
+                            seatCount.put(currentChairPos, nextSeatCount);
                             log.info("seatCount <key:" + currentChairPos +"> 업데이트 : " + seatCount.get(currentChairPos));
+                            if (nextSeatCount >= seatCountThreshold) {
+                                hoggedSeatSet.add(chair);
+                            }
                             break LOOP_PEOPLE;
                         } else {
                             // 사석화 X. seat_count 0으로 초기화
-                            int prevChairPos = seatCount.get(currentChairPos);
+                            int prevChairPos = seatCount.getOrDefault(currentChairPos, 0);
                             seatCount.put(currentChairPos, 0);
                             if (prevChairPos > 0) {
                                 log.info("seatCount <key:" + currentChairPos +"> 초기화 by [only chair]: " + seatCount.get(currentChairPos));
@@ -82,7 +88,6 @@ public class CheckSeatService {
                     }
                 }
             }
-            // log.info("break gotopeople test");
         }
         log.info("[AFTER] seatCount : " + seatCount);
     }
