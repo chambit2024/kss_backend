@@ -11,6 +11,3 @@ spring:
       database:
         pubsub: 0
         crud: 1
-local:
-  storage:
-    filepath: "/labels"
