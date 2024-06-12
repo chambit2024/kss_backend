@@ -50,4 +50,9 @@ public class BoxUtil {
                 && Math.abs(pos1.getY() - pos2.getY()) < threshold;
     }
 
+    public boolean isSameSeat(Box box1, Box box2, double threshold) {
+        return Math.abs(box1.getCenter_x() - box2.getCenter_x()) < threshold
+                && Math.abs(box1.getCenter_y() - box2.getCenter_y()) < threshold;
+    }
+
 }
