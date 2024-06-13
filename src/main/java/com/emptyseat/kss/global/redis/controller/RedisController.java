@@ -14,7 +14,7 @@ public class RedisController {
 
     @PostMapping("api/chat")
     public String pubSub(@RequestBody ChatMessage chatMessage) {
-        redisPubService.publishMessage();
+//        redisPubService.publishMessage();
 
         return "success";
     }

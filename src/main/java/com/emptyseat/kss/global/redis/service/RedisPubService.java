@@ -29,10 +29,10 @@ public class RedisPubService {
 //        redisTemplate.convertAndSend("yolo_result", chatMessage);
 //    }
 
-    @Async
-    @Scheduled(fixedRate = 1000)
+//    @Async
+//    @Scheduled(fixedRate = 1000)
     public void publishMessage() {
-        String mockFilePath = "{\"filePath\":"+"\"chambit_test_mini_" + (index++) + ".txt\"" + "}";
+        String mockFilePath = "{\"filePath\":"+"\"" + (index++) + ".txt\"" + "}";
         log.info("Published message: " + mockFilePath);
         stringRedisTemplate.convertAndSend("yolo_result", mockFilePath);
     }

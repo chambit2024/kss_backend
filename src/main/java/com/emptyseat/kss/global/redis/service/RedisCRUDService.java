@@ -15,16 +15,16 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class RedisCRUDService {
-    private final StringRedisTemplate redisTemplate;
+    private static StringRedisTemplate redisTemplate = new StringRedisTemplate();
 
     public RedisCRUDService(@Qualifier("crudRedisTemplate") StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+        RedisCRUDService.redisTemplate = redisTemplate;
     }
 
     /**
      * key와 data를 Redis에 저장.
      */
-    public void setValues(String key, String data) {
+    public static void setValues(String key, String data) {
         ValueOperations<String, String> values= redisTemplate.opsForValue();
         values.set(key, data);
     }
@@ -41,7 +41,7 @@ public class RedisCRUDService {
      * key 파라미터로 받아 key를 기반으로 데이터를 조회한다.
      */
     @Transactional(readOnly = true)
-    public String getValues(String key) {
+    public static String getValues(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         if (values.get(key) == null) {
             return "false";

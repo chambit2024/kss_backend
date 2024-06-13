@@ -33,4 +33,12 @@ class BoxUtilTest {
         double overlapPercent2 = boxUtil.overlap_percent(chair, bag);
         assertEquals(0.0, overlapPercent2, "Overlap percent between Chair and Bag should be 0.");
     }
+
+    @Test
+    void Box_샘플좌표계산() {
+        Box box1 = new Box("4", "0.447917", "0.406944", "0.0458333", "0.0824074");
+        Box box2 = new Box("3", "0.429167", "0.55787", "0.09375", "0.25463");
+
+        System.out.println(boxUtil.overlap_percent(box1, box2));
+    }
 }

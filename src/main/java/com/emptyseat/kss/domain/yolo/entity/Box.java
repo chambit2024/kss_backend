@@ -41,4 +41,14 @@ public class Box {
                 ", height=" + height +
                 '}';
     }
+    public boolean equals(Pos pos) {
+        if (pos == null) return false;
+        return center_x == pos.getX() && center_y == pos.getY();
+    }
+
+    public boolean equals(Box box) {
+        if (this == box) return true;
+        if (box == null) return false;
+        return center_x == box.getCenter_x() && center_y == box.getCenter_y();
+    }
 }

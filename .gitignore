@@ -40,4 +40,4 @@ out/
 .vscode/
 
 ### Mocking Data ###
-/src/main/resources/mock/**
+src/main/resources/mock/**

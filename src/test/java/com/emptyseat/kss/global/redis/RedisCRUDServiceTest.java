@@ -30,6 +30,7 @@ class RedisCRUDServiceTest {
     @BeforeEach
     void shutDown() {
         redisCRUDService.setValues(KEY, VALUE, DURATION);
+        redisCRUDService.setValues("latest-frame", "latest-frame test values success!");
     }
 
     @AfterEach
@@ -45,6 +46,15 @@ class RedisCRUDServiceTest {
 
         // then
         assertThat(VALUE).isEqualTo(findValue);
+    }
+    @Test
+    @DisplayName("Redis에 임의의 키-밸류가 정상적으로 조회된다.")
+    void saveAndFindTest2() throws Exception {
+        // when
+        String findValue = redisCRUDService.getValues("latest-frame");
+
+        // then
+        assertThat("latest-frame test values success!").isEqualTo(findValue);
     }
 
     @Test

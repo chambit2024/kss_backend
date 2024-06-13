@@ -5,11 +5,11 @@ import com.emptyseat.kss.domain.yolo.entity.Box;
 import com.emptyseat.kss.domain.yolo.entity.Pos;
 import com.emptyseat.kss.domain.yolo.service.CheckSeatService;
 import com.emptyseat.kss.domain.yolo.service.FileProcessingService;
+import com.emptyseat.kss.global.redis.service.RedisCRUDService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Service;
@@ -31,9 +31,18 @@ public class YoloInferenceReceiver implements MessageListener {
 
     private final Set<Box> hoggedSeatSet = new HashSet<>();
 
-
     private String labelStoragePath = "/labels/";
     private String DlabelStoragePath = "/Users/seungho/Projects/kss_backend/src/main/resources/mock/";
+
+    public static Map<Integer, Integer> analyzeSeatCount(Map<Pos, Integer> seatCount) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+
+        for (Integer value : seatCount.values()) {
+            countMap.put(value, countMap.getOrDefault(value, 0) + 1);
+        }
+
+        return countMap;
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -41,24 +50,41 @@ public class YoloInferenceReceiver implements MessageListener {
             // ObjectMapper.readValue를 사용해 JSON을 파싱하여 POJO로 변환
             YoloMessageRequest chatMessage = mapper.readValue(message.getBody(), YoloMessageRequest.class);
 
-            String filePath = DlabelStoragePath + chatMessage.getFilePath();
-            log.info("현재 파일 path: " + filePath);
+            String filePath = labelStoragePath + chatMessage.getFilePath();
+            log.trace("현재 파일 path: " + filePath);
 
             fileProcessingService.clearBoxList();
             fileProcessingService.processFile(filePath);
 
-            log.info("현재 파일 boxlist: " + fileProcessingService.getBoxList());
+            log.trace("현재 파일 boxlist: " + fileProcessingService.getBoxList());
 
             CheckSeatService checkSeatService = new CheckSeatService(fileProcessingService.getBoxList());
             checkSeatService.FindHoggedSeat(seatCount, hoggedSeatSet);
 
             log.info("누적 seatCount: " + seatCount);
-            log.info("현재 hoggedSeat: " + hoggedSeatSet);
+            Map<Integer, Integer> result = analyzeSeatCount(seatCount);
+
+            for (Map.Entry<Integer, Integer> entry : result.entrySet()) {
+                log.info("Count: " + entry.getKey() + ", 개수: " + entry.getValue());
+            }
+
+
+            saveHoggedSeatSetToRedis(hoggedSeatSet);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void saveHoggedSeatSetToRedis(Set<Box> hoggedSeatSet) {
+        try {
+//            String hoggedSeatJson = mapper.writeValueAsString(hoggedSeatSet);
+            String hoggedSeatJson = hoggedSeatSet.toString();
+            RedisCRUDService.setValues("latest-hoggedseat", hoggedSeatJson);
+            log.info("[redis-latest-hoggedseat] save:  " + RedisCRUDService.getValues("latest-hoggedseat"));
+        } catch (Exception e) {
+            log.error("Failed to convert hoggedSeatSet to JSON", e);
+        }
+    }
 
 }

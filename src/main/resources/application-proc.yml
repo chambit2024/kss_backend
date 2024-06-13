@@ -10,4 +10,4 @@ spring:
       port: ${SPRING_DATA_REDIS_PORT:6379}
       database:
         pubsub: 0
-        crud: 1
+        crud: 0

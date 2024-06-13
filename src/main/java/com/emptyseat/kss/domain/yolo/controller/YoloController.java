@@ -2,6 +2,7 @@ package com.emptyseat.kss.domain.yolo.controller;
 
 import com.emptyseat.kss.domain.yolo.dto.HoggedSeatResponse;
 import com.emptyseat.kss.domain.yolo.entity.Box;
+import com.emptyseat.kss.domain.yolo.service.CurrentHoggedSeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,10 +32,9 @@ public class YoloController {
     @GetMapping
     public ResponseEntity<HoggedSeatResponse> getFrame() {
         // Redis에서 프레임 추출
-        List<Box> seats = new ArrayList<>(); // redis에서 추출
-        String frame = "test-frame"; // redis에서 추출
+        CurrentHoggedSeatService currentHoggedSeatService = new CurrentHoggedSeatService();
 
-        return ResponseEntity.ok().body(new HoggedSeatResponse(seats,frame));
+        return ResponseEntity.ok().body(currentHoggedSeatService.getResponse());
     }
 
 }

@@ -6,10 +6,14 @@ import com.emptyseat.kss.domain.yolo.receiver.YoloInferenceReceiver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -91,38 +95,29 @@ public class RedisConfig {
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-
-
-
-//    @Bean
-//    public RedisTemplate<String, Object> redisTemplate() {
-//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(YoloMessageRequest.class));
-//        redisTemplate.setConnectionFactory(pubsubConnectionFactory());
-//
-//        return redisTemplate;
-//    }
-
-
+    @Bean
+    public YoloInferenceReceiver yoloInferenceReceiver() {
+        return new YoloInferenceReceiver();
+    }
 
 
     /**
      * 스프링에서 비동기 메세지를 지원하는 마지막 컴포넌트. 정해진 채널로 들어온 메세지를 처리할 action 정의
      */
     @Bean
-    MessageListenerAdapter messageListenerAdapter() {
-        return new MessageListenerAdapter(new YoloInferenceReceiver());
+    MessageListenerAdapter messageListenerAdapter(YoloInferenceReceiver yoloInferenceReceiver) {
+        return new MessageListenerAdapter(yoloInferenceReceiver, "onMessage");
     }
 
     /**
      * 컨테이너 설정
      */
     @Bean
-    RedisMessageListenerContainer redisContainer() {
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter messageListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(pubsubConnectionFactory());
-        container.addMessageListener(messageListenerAdapter(), topic());
+        container.addMessageListener(messageListenerAdapter, topic());
         return container;
     }
 
