@@ -34,10 +34,6 @@ public class CheckSeatService {
         }
     }
 
-    public void RemoveChairFromHoggedSeat(Set<Box> hoggedSeatSet) {
-
-    }
-
     public void FindHoggedSeat(Map<Pos, Integer> seatCount, Set<Box> hoggedSeatSet) {
         boolean isSeatExist;
 
@@ -61,27 +57,11 @@ public class CheckSeatService {
                     int currentSeatCountValue = entry.getValue();
                     iterator.remove();
                     seatCount.put(currentChairPos, currentSeatCountValue);
-//                    if (hoggedSeatSet.contains(chair)) {
-//                        hoggedSeatSet.
-//                    }
                     log.trace("key change: " + seatPos + " -> " + currentChairPos + ", value=" + currentSeatCountValue);
                     break;
                 }
             }
 
-
-//            for (Pos seatPos: seatCount.keySet()) {
-//                if ((Objects.equals(seatPos.getX(), currentChairPos.getX()) && Objects.equals(seatPos.getY(), currentChairPos.getY())) || boxUtil.isSameSeat(currentChairPos, seatPos, seatDistanceThreshold)) {
-//                    // 기존 좌석 취급. 좌표 업데이트 필요
-//                    isSeatExist = true;
-//
-//                    int currentSeatCountValue = seatCount.get(seatPos);
-//                    seatCount.remove(seatPos);
-//                    seatCount.put(currentChairPos, currentSeatCountValue);
-//                    log.info("key change: " + seatPos + " -> " + currentChairPos + ", value=" + currentSeatCountValue);
-//                    break;
-//                }
-//            }
             if (!isSeatExist) {
                 seatCount.put(currentChairPos, 0);
             }
@@ -95,7 +75,7 @@ public class CheckSeatService {
                     if (prevPosSeatCount > 0) {
                         log.info("seatCount <key:" + currentChairPos +"> 초기화 by [chair, people]: " + seatCount.get(currentChairPos));
                         for (Box hoggedSeat: hoggedSeatSet) {
-                            if (boxUtil.isSameSeat(hoggedSeat, chair, 0.01)) {
+                            if (boxUtil.isSameSeat(hoggedSeat, chair, 0.05)) {
                                 hoggedSeatSet.remove(hoggedSeat);
                                 break;
                             }
@@ -121,7 +101,7 @@ public class CheckSeatService {
                     if (prevChairPos > 0) {
                         log.info("seatCount <key:" + currentChairPos +"> 초기화 by [only chair]: " + seatCount.get(currentChairPos));
                         for (Box hoggedSeat: hoggedSeatSet) {
-                            if (boxUtil.isSameSeat(hoggedSeat, chair, 0.01)) {
+                            if (boxUtil.isSameSeat(hoggedSeat, chair, 0.05)) {
                                 hoggedSeatSet.remove(hoggedSeat);
                                 break;
                             }
